@@ -17,10 +17,17 @@ export default class MovieRated extends Component {
   }
 
   componentDidMount() {
-    const { savedCurrentPage, session } = this.props
+    const { savedCurrentPage } = this.props
     this.setState({ currentPage: savedCurrentPage.ratedPage })
     const { currentPage } = this.state
-    this.getMovieList(currentPage, session)
+    this.getMovieList(currentPage)
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    const { currentPage } = this.state
+    if (currentPage !== prevState.currentPage) {
+      this.getMovieList(currentPage)
+    }
   }
 
   getMovieList = debounce((currentPage) => {

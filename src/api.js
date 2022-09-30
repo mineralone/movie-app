@@ -7,20 +7,6 @@ export default class Api {
 
   session = localStorage.getItem('session') || ''
 
-  token = localStorage.getItem('token') || ''
-  // Не используется
-
-  async createToken() {
-    if (!this.token) {
-      const request = await fetch(`${this.apiBaseMovie}authentication/token/new?api_key=${this.apiKey}`)
-      const response = await request.json()
-      this.token = response.request_token
-      localStorage.setItem('token', this.token)
-      const urlApp = window.location.href
-      window.location.href = `https://www.themoviedb.org/authenticate/${this.token}?redirect_to=${urlApp}`
-    }
-  }
-
   async createGuestSession() {
     this.session = localStorage.getItem('session')
     if (!this.session) {
@@ -35,7 +21,7 @@ export default class Api {
   async onRateMovie(id, rating) {
     const obj = { value: rating }
     const request = await fetch(
-      `${this.apiBaseMovie}movie/${id}/rating?api_key=${this.apiKey}&guest_session_id=${this.session}`,
+      `${this.apiBaseMovie}movie/${id}/rating?api_key=${this.apiKey}&guest_session_id=${JSON.parse(this.session)}`,
       {
         method: 'POST',
         headers: {
@@ -52,7 +38,7 @@ export default class Api {
   async getRatedMovies(page) {
     if (!this.session) throw new Error('Guest session not created')
     const request = await fetch(
-      `${this.apiBaseMovie}guest_session/${this.session}/rated/movies?page=${page}&api_key=${this.apiKey}`,
+      `${this.apiBaseMovie}guest_session/${JSON.parse(this.session)}/rated/movies?page=${page}&api_key=${this.apiKey}`,
       {
         headers: {
           'Content-Type': 'application/json;charset=utf-8',
