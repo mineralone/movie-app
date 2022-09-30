@@ -1,0 +1,11 @@
+.movie-list {
+  margin-bottom: 40px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.movie-list__item {
+  filter: drop-shadow(0px 4px 12px rgba(0, 0, 0, 0.3));
+}
