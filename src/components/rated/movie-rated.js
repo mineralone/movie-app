@@ -2,10 +2,10 @@ import React, { Component } from 'react'
 import { Spin, Alert, Pagination } from 'antd'
 import { debounce } from 'lodash'
 
-import MovieList from '../movie-list'
+import List from '../list'
 import Api from '../../api'
 
-export default class MovieRated extends Component {
+export default class Rated extends Component {
   api = new Api()
 
   state = {
@@ -61,7 +61,7 @@ export default class MovieRated extends Component {
       <main className="movie-page">
         {load ? <Spin className="movie-page__spin" size="large" /> : null}
         {error ? <Alert message={error.message} type="error" showIcon /> : null}
-        <MovieList movies={movieDate} />
+        <List movies={movieDate} />
         <Pagination
           className="movie-page__pagination"
           total={totalMovies}

@@ -53,7 +53,6 @@ export default class Api {
     if (query.length === 0) return { results: null }
     const request = await fetch(`${this.apiBaseMovie}search/movie?api_key=${this.apiKey}&query=${query}&page=${page}`)
     const response = await request.json()
-    if (response.results.length === 0) throw new Error('no content')
     return response
   }
 

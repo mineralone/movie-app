@@ -1,11 +1,11 @@
 import React from 'react'
 import { Row, Col } from 'antd'
 
-import './movie-list.css'
+import './list.css'
 
 import Movie from '../movie'
 
-export default function MovieList({ movies, genresList }) {
+export default function List({ movies, genresList }) {
   let items
   if (movies) {
     items = movies.map((movie) => {

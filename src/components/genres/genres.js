@@ -1,8 +1,8 @@
 import React from 'react'
 import { Tag } from 'antd'
-import './movie-genres.css'
+import './genres.css'
 
-export default function MovieGenres({ genres, genresList }) {
+export default function Genres({ genres, genresList }) {
   genres = genres.filter((item, index) => index < 4)
   const items = genres.map((genreId) => (
     <Tag key={genreId} className="movie-genres__item">

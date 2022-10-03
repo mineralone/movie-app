@@ -1,17 +1,17 @@
 import React, { Component } from 'react'
 import { Alert, Menu } from 'antd'
 
-import './movie-app.css'
+import './app.css'
 
-import { MovieGenresProvider } from '../movie-genres-context'
-import MovieSeacrh from '../movie-search'
+import { GenresProvider } from '../genres-context'
+import Seacrh from '../search'
 import Api from '../../api'
-import MovieRated from '../movie-rated'
+import Rated from '../rated'
 
-export default class MovieApp extends Component {
+export default class App extends Component {
   state = {
     error: null,
-    genresList: {},
+    genresList: null,
     selectedPage: 'search',
     savedInputSearch: '',
     savedCurrentPage: {
@@ -65,7 +65,7 @@ export default class MovieApp extends Component {
       { label: 'Rated', key: 'rated' },
     ]
     return (
-      <MovieGenresProvider value={genresList}>
+      <GenresProvider value={genresList}>
         {error ? <Alert type="error" message={error.message} showIcon /> : null}
         <section className="movie-app">
           <Menu
@@ -76,17 +76,17 @@ export default class MovieApp extends Component {
             onSelect={this.onSelect}
           />
           {selectedPage === 'search' ? (
-            <MovieSeacrh
+            <Seacrh
               onChangeInputValue={this.onChangeInputValue}
               savedInputSearch={savedInputSearch}
               savedCurrentPage={savedCurrentPage}
               onChangeCurrentPage={this.onChangeCurrentPage}
             />
           ) : (
-            <MovieRated savedCurrentPage={savedCurrentPage} onChangeCurrentPage={this.onChangeCurrentPage} />
+            <Rated savedCurrentPage={savedCurrentPage} onChangeCurrentPage={this.onChangeCurrentPage} />
           )}
         </section>
-      </MovieGenresProvider>
+      </GenresProvider>
     )
   }
 }

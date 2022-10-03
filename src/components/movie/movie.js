@@ -6,8 +6,8 @@ import parseISO from 'date-fns/parseISO'
 import Ellipsis from 'ellipsis.js'
 
 import Api from '../../api'
-import MovieGenres from '../movie-genres'
-import { MovieGenresConsumer } from '../movie-genres-context'
+import MovieGenres from '../genres'
+import { GenresConsumer } from '../genres-context'
 
 import './movie.css'
 
@@ -81,12 +81,12 @@ export default class Movie extends Component {
 
   onChange = (rating) => {
     const { id } = this.props
+    this.setState({ stars: rating })
     this.api.onRateMovie(id, rating).then(() => {
       if (!localStorage.getItem('ratedMovies')) localStorage.setItem('ratedMovies', JSON.stringify({}))
       const ratedMovies = JSON.parse(localStorage.getItem('ratedMovies'))
       ratedMovies[id] = rating
       localStorage.setItem('ratedMovies', JSON.stringify(ratedMovies))
-      this.setState({ stars: rating })
     })
   }
 
@@ -111,16 +111,14 @@ export default class Movie extends Component {
         <Title className="movie__title" ref={this.movieTitle}>
           {title}
         </Title>
-        <MovieGenresConsumer>
-          {(genresList) => <MovieGenres genres={genres} genresList={genresList} />}
-        </MovieGenresConsumer>
+        <GenresConsumer>{(genresList) => <MovieGenres genres={genres} genresList={genresList} />}</GenresConsumer>
         <Text className="movie__date-release">
           {release ? format(parseISO(release), 'MMMM d, y') : 'Month day, Year'}
         </Text>
         <Paragraph className="movie__plot" ref={this.moviePlot}>
           {plot || 'No description'}
         </Paragraph>
-        <Rate className="movie__rate" allowHalf value={stars} onChange={this.onChange} count={10} />
+        <Rate className="movie__rate" allowHalf value={stars} onChange={this.onChange} count={10} allowClear={false} />
       </Card>
     )
   }

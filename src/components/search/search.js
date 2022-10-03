@@ -1,12 +1,12 @@
 import React, { Component } from 'react'
 import { Input, Spin, Alert, Pagination } from 'antd'
 import { debounce } from 'lodash'
-import './movie-search.css'
+import './search.css'
 
-import MovieList from '../movie-list'
+import List from '../list'
 import Api from '../../api'
 
-export default class MovieSeacrh extends Component {
+export default class Seacrh extends Component {
   api = new Api()
 
   state = {
@@ -23,7 +23,7 @@ export default class MovieSeacrh extends Component {
     this.setState({ currentPage: savedCurrentPage.seacrhPage })
     if (savedInputSearch) {
       this.setState({ inputValue: savedInputSearch })
-      this.getMovieList(savedInputSearch.toString(), '1')
+      this.getMovieList(savedInputSearch.toString(), savedCurrentPage.seacrhPage)
     }
   }
 
@@ -37,9 +37,10 @@ export default class MovieSeacrh extends Component {
   }
 
   onChange = (e) => {
-    const { onChangeInputValue } = this.props
-    this.setState({ inputValue: e.target.value })
+    const { onChangeInputValue, onChangeCurrentPage } = this.props
+    this.setState({ inputValue: e.target.value, currentPage: 1 })
     onChangeInputValue(e.target.value)
+    onChangeCurrentPage(1, true)
   }
 
   getMovieList = debounce((str, currentPage) => {
@@ -47,15 +48,17 @@ export default class MovieSeacrh extends Component {
     this.goLoad()
     this.api
       .getMovies(str, currentPage)
-      .then((result) =>
-        this.setState({
-          movieDate: result.results,
-          totalMovies: result.total_results,
-          load: false,
-          error: null,
-        })
-      )
-      .catch((e) => this.setState({ error: e, load: false }))
+      .then((result) => {
+        if (result.results.length !== 0) {
+          this.setState({
+            movieDate: result.results,
+            totalMovies: result.total_results,
+            load: false,
+            error: null,
+          })
+        } else throw new Error('no content')
+      })
+      .catch((e) => this.setState({ error: e, load: false, currentPage: 1 }))
   }, 800)
 
   onPaginationChange = (currentPage) => {
@@ -70,12 +73,9 @@ export default class MovieSeacrh extends Component {
 
   render() {
     const { movieDate, load, error, totalMovies, currentPage, inputValue } = this.state
-    return (
-      <main className="movie-page">
-        <Input className="movie-page__input" ref={this.input} value={inputValue} onChange={this.onChange} />
-        {load ? <Spin className="movie-page__spin" size="large" /> : null}
-        {error ? <Alert message={error.message} type="error" showIcon /> : null}
-        <MovieList movies={movieDate} />
+    const body = (
+      <>
+        <List movies={movieDate} />
         <Pagination
           className="movie-page__pagination"
           total={totalMovies}
@@ -86,6 +86,14 @@ export default class MovieSeacrh extends Component {
           showSizeChanger={false}
           onChange={this.onPaginationChange}
         />
+      </>
+    )
+
+    return (
+      <main className="movie-page">
+        <Input className="movie-page__input" ref={this.input} value={inputValue} onChange={this.onChange} />
+        {load ? <Spin className="movie-page__spin" size="large" /> : null}
+        {error ? <Alert message={error.message} type="error" showIcon /> : { ...body }}
       </main>
     )
   }
